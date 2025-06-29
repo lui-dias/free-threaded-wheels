@@ -1,0 +1,76 @@
+name: Build and Release Pillow Wheel
+
+on:
+  push:
+    tags:
+      - 'v*.*.*' # Trigger when a tag like v1.0.0 is pushed
+  workflow_dispatch: # Allows manual triggering from the GitHub UI
+
+jobs:
+  build-and-release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write # Needed to create releases and upload assets
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Set up Docker BuildX
+      uses: docker/setup-buildx-action@v3
+
+    - name: Build Docker image
+      id: docker_build
+      uses: docker/build-push-action@v5
+      with:
+        context: .
+        file: ./Dockerfile # Assuming your Dockerfile is in the root of your repo
+        push: false # We only need to build, not push to a registry
+        load: true # Load the image into Docker daemon for immediate use
+
+    - name: Run container and copy wheel
+      run: |
+        CONTAINER_ID=$(docker create $(echo ${{ steps.docker_build.outputs.image }} | sed 's/sha256://'))
+        docker cp $CONTAINER_ID:/opt/pillow/dist/. ./pillow_wheels/
+        docker rm $CONTAINER_ID
+      # Make sure the target directory for copying exists
+      # The sed command is to remove the "sha256:" prefix from the image ID, if it's there.
+      # Create a directory to store the wheels
+      mkdir -p pillow_wheels
+
+    - name: Find the generated wheel file
+      id: find_wheel
+      run: |
+        WHEEL_FILE=$(find ./pillow_wheels -name "Pillow-*.whl" | head -n 1)
+        if [ -z "$WHEEL_FILE" ]; then
+          echo "Error: No Pillow wheel file found!"
+          exit 1
+        fi
+        echo "Found wheel file: $WHEEL_FILE"
+        echo "wheel_path=$WHEEL_FILE" >> $GITHUB_OUTPUT
+        echo "wheel_name=$(basename $WHEEL_FILE)" >> $GITHUB_OUTPUT
+
+    - name: Create GitHub Release
+      id: create_release
+      if: startsWith(github.ref, 'refs/tags/') # Only create release if triggered by a tag
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: ${{ github.ref }}
+        release_name: Release ${{ github.ref }}
+        body: |
+          Pre-built Pillow wheel for ${{ github.ref }}
+        draft: false
+        prerelease: false
+
+    - name: Upload Release Asset
+      if: startsWith(github.ref, 'refs/tags/') # Only upload if triggered by a tag
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ${{ steps.find_wheel.outputs.wheel_path }}
+        asset_name: ${{ steps.find_wheel.outputs.wheel_name }}
+        asset_content_type: application/octet-stream
