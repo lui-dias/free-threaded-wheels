@@ -29,18 +29,15 @@ jobs:
       - name: Clone Pillow repository
         run: git clone --recursive --depth 1 https://github.com/python-pillow/Pillow pillow
 
-      - name: Clone GRPC repository
-        run: git clone --recursive --depth 1 https://github.com/grpc/grpc grpc
+      - name: Clone custom OpenCV repository
+        run: git clone --recursive https://github.com/rostan-t/opencv-python opencv
 
-      - name: Build GRPC
+      - name: Build OpenCV
         run: |
-          sudo apt-get install -y libsystemd-dev
-          export GRPC_PYTHON_BUILD_WITH_SYSTEMD=1
-          cd grpc
-          uv venv --python 3.14t
-          uv pip install -r requirements.txt
+          cd opencv
+          git checkout ft-python-limited-api
           cd ..
-          GRPC_PYTHON_BUILD_WITH_CYTHON=1 $(uv python find 3.14t) -m pip wheel grpc -v
+          $(uv python find 3.14t) -m pip wheel opencv -v
 
       - name: Build Pillow
         run: $(uv python find 3.14t) -m pip wheel pillow -v
