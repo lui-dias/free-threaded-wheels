@@ -33,10 +33,7 @@ jobs:
         CONTAINER_ID=$(docker create $(echo ${{ steps.docker_build.outputs.image }} | sed 's/sha256://'))
         docker cp $CONTAINER_ID:/opt/pillow/dist/. ./pillow_wheels/
         docker rm $CONTAINER_ID
-      # Make sure the target directory for copying exists
-      # The sed command is to remove the "sha256:" prefix from the image ID, if it's there.
-      # Create a directory to store the wheels
-      mkdir -p pillow_wheels
+        mkdir -p pillow_wheels
 
     - name: Find the generated wheel file
       id: find_wheel
