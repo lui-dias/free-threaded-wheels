@@ -29,6 +29,15 @@ jobs:
       - name: Clone Pillow repository
         run: git clone --recursive --depth 1 https://github.com/python-pillow/Pillow pillow
 
+      - name: Clone GRPC repository
+        run: git clone --recursive --depth 1 https://github.com/grpc/grpc grpc
+
+      - name: Build GRPC
+        run: |
+          apt-get install -y libsystemd-dev
+          export GRPC_PYTHON_BUILD_WITH_SYSTEMD=1
+          $(uv python find 3.14) -m pip wheel grpc -v
+
       - name: Build Pillow
         run: $(uv python find 3.14) -m pip wheel pillow -v
 
