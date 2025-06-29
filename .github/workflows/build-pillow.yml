@@ -42,22 +42,10 @@ jobs:
       - name: Build Pillow
         run: $(uv python find 3.14t) -m pip wheel ./pillow -v
 
-      - name: Find and move wheel file
-        run: |
-          # Find the wheel file with linux_x86_64 in the name
-          WHEEL_FILE=$(find . -name "*linux_x86_64.whl" -type f | head -1)
-          if [ -n "$WHEEL_FILE" ]; then
-            echo "Found wheel file: $WHEEL_FILE"
-            echo "WHEEL_FILENAME=$(basename $WHEEL_FILE)" >> $GITHUB_ENV
-          else
-            echo "No wheel file with linux_x86_64 found"
-            exit 1
-          fi
-
       - name: Add wheel file to repository
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          git add $WHEEL_FILENAME
-          git commit -m "Add Pillow wheel: $WHEEL_FILENAME"
+          git add ./\*.whl
+          git commit -m "Add built wheels: $(ls *.whl | tr '\n' ' ')"
           git push
