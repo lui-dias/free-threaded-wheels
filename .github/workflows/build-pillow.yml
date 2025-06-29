@@ -36,8 +36,6 @@ jobs:
           WHEEL_FILE=$(find . -name "*linux_x86_64.whl" -type f | head -1)
           if [ -n "$WHEEL_FILE" ]; then
             echo "Found wheel file: $WHEEL_FILE"
-            # Move to repository root
-            mv "$WHEEL_FILE" ./
             echo "WHEEL_FILENAME=$(basename $WHEEL_FILE)" >> $GITHUB_ENV
           else
             echo "No wheel file with linux_x86_64 found"
