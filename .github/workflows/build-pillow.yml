@@ -32,6 +32,13 @@ jobs:
       - name: Clone custom OpenCV repository
         run: git clone --recursive https://github.com/rostan-t/opencv-python opencv
 
+      - name: Clone GRPC repository
+        run: git clone --recursive --depth 1 https://github.com/grpc/grpc grpc
+
+      - name: Build GRPC
+        run: |
+          $(uv python find 3.14t) -m pip wheel ./grpc -v
+
       - name: Build OpenCV
         run: |
           cd opencv
