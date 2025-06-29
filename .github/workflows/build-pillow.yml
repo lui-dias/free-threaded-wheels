@@ -16,6 +16,14 @@ jobs:
       - name: Install Python 3.14
         run: uv python install 3.14
 
+      - name: Install Pillow build dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y build-essential \
+            libtiff5-dev libjpeg8-dev libopenjp2-7-dev zlib1g-dev libfreetype6-dev \
+            liblcms2-dev libwebp-dev tcl8.6-dev tk8.6-dev python3-tk libharfbuzz-dev \
+            libfribidi-dev libxcb1-dev libjpeg62-turbo-dev
+
       - name: Clone Pillow repository
         run: git clone --recursive --depth 1 https://github.com/python-pillow/Pillow pillow
 
