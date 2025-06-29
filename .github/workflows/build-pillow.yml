@@ -13,4 +13,14 @@ jobs:
       - name: Install uv
         uses: astral-sh/setup-uv@v5
 
-      - run: uv python install 3.14
+      - name: Install Python 3.14
+        run: uv python install 3.14
+
+      - name: Clone Pillow repository
+        run: git clone --recursive --depth 1 https://github.com/python-pillow/Pillow pillow
+
+      - name: Build Pillow
+        run: $(uv python find 3.14) -m pip wheel pillow -v
+
+      - name: List files
+        run: ls -la && ls -la pillow
