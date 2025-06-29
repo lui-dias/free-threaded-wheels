@@ -1,5 +1,7 @@
 name: Building Pillow
 
+on: [workflow_dispatch]
+
 jobs:
   uv-example:
     name: python
