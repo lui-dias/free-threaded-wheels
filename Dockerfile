@@ -10,7 +10,7 @@ COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
 # - git: Needed to clone the opencv-python repository.
 # - build-essential: Provides compilers and other tools necessary to build
 #   Python packages that include C/C++ extensions, which opencv-python does.
-RUN apt update && apt upgrade -y && apt install -y git build-essential \
+RUN apt-get update && apt-get upgrade -y && apt-get install -y git build-essential \
     libtiff5-dev libjpeg8-dev libopenjp2-7-dev zlib1g-dev libfreetype6-dev \
     liblcms2-dev libwebp-dev tcl8.6-dev tk8.6-dev python3-tk libharfbuzz-dev \
     libfribidi-dev libxcb1-dev libjpeg62-turbo-dev
