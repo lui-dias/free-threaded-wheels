@@ -39,9 +39,8 @@ jobs:
           cd grpc
           uv venv --python 3.14t
           uv pip install -r requirements.txt
-          GRPC_PYTHON_BUILD_WITH_CYTHON=1 uv pip install .
           cd ..
-          $(uv python find 3.14t) -m pip wheel grpc -v
+          GRPC_PYTHON_BUILD_WITH_CYTHON=1 $(uv python find 3.14t) -m pip wheel grpc -v
 
       - name: Build Pillow
         run: $(uv python find 3.14t) -m pip wheel pillow -v
