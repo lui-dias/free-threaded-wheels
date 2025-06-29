@@ -1,6 +1,6 @@
 name: Building Pillow
 
-on: [workflow_dispatch]
+on: [workflow_dispatch, push]
 
 jobs:
   uv-example:
@@ -34,7 +34,7 @@ jobs:
 
       - name: Build GRPC
         run: |
-          apt-get install -y libsystemd-dev
+          sudo apt-get install -y libsystemd-dev
           export GRPC_PYTHON_BUILD_WITH_SYSTEMD=1
           $(uv python find 3.14) -m pip wheel grpc -v
 
