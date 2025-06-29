@@ -37,10 +37,10 @@ jobs:
           cd opencv
           git checkout ft-python-limited-api
           cd ..
-          $(uv python find 3.14t) -m pip wheel opencv -v
+          $(uv python find 3.14t) -m pip wheel ./opencv -v
 
       - name: Build Pillow
-        run: $(uv python find 3.14t) -m pip wheel pillow -v
+        run: $(uv python find 3.14t) -m pip wheel ./pillow -v
 
       - name: Find and move wheel file
         run: |
